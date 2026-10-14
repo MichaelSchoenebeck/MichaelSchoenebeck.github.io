@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mission Mars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* ==========================================================
+   Mission Mars · MMDE30 Einsendeaufgabe · Michael Schönebeck
+   Mobile First: einspaltig, horizontale Navigation.
+   Ab 48em: zweispaltiges Flexbox-Layout mit vertikaler Navigation.
+   ========================================================== */
+
+:root {
+    --void: #05060c;
+    --panel: #0b0f1c;
+    --panel-2: #111729;
+    --linie: rgba(140, 170, 230, 0.16);
+    --text: #e8ecf6;
+    --text-leise: #9aa5bf;
+    --mars: #ff6b3d;
+    --mars-dunkel: #c2441f;
+    --ion: #7cd4ff;
+    --ion-glow: rgba(124, 212, 255, 0.35);
+    --ok: #63e6a5;
+
+    --schrift-display: "Chakra Petch", "Eurostile", "Arial Narrow", sans-serif;
+    --schrift-text: "IBM Plex Sans", "Segoe UI", Verdana, sans-serif;
+    --schrift-daten: "IBM Plex Mono", Menlo, Consolas, monospace;
+
+    --radius: 0.75rem;
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: var(--schrift-text);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--text);
+    background-color: var(--void);
+    /* Sternenfeld und Marsglühen aus reinem CSS */
+    background-image:
+        radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 68% 9%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1.5px 1.5px at 85% 42%, rgba(200, 225, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 33% 64%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 52% 88%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1.5px 1.5px at 6% 92%, rgba(200, 225, 255, 0.6), transparent),
+        radial-gradient(900px 600px at 105% -10%, rgba(255, 107, 61, 0.22), transparent 60%),
+        radial-gradient(800px 600px at -10% 110%, rgba(60, 110, 220, 0.18), transparent 60%);
+    background-attachment: fixed;
+}
+
+#holder {
+    width: 100%;
+}
+
+/* ---------- Header ---------- */
+
+header {
+    padding: 1.5rem 1rem 1.25rem;
+    border-bottom: 1px solid var(--linie);
+    background: linear-gradient(180deg, rgba(11, 15, 28, 0.9), rgba(5, 6, 12, 0.6));
+}
+
+.kennung {
+    margin: 0 0 0.5rem;
+    font-family: var(--schrift-daten);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ion);
+}
+
+h1 {
+    margin: 0;
+    font-family: var(--schrift-display);
+    font-weight: 600;
+    font-size: clamp(1.7rem, 7vw, 3.1rem);
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+}
+
+h1 span {
+    display: block;
+    font-weight: 400;
+    color: var(--mars);
+    text-shadow: 0 0 24px rgba(255, 107, 61, 0.45);
+}
+
+.telemetrie {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.telemetrie li {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--linie);
+    border-radius: 0.5rem;
+    background: rgba(17, 23, 41, 0.7);
+    font-family: var(--schrift-daten);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.telemetrie span {
+    display: block;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-leise);
+}
+
+.status {
+    color: var(--ok);
+    font-weight: 500;
+}
+
+.status::before {
+    content: "";
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.4rem;
+    border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 8px var(--ok);
+    animation: puls 2.4s ease-in-out infinite;
+}
+
+@keyframes puls {
+    50% { opacity: 0.35; }
+}
+
+/* ---------- Navigation (mobil: horizontal) ---------- */
+
+nav {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 10;
+    background: rgba(5, 6, 12, 0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--linie);
+}
+
+.nav-titel,
+.nav-info {
+    display: none;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    list-style-type: none;
+    display: flex;
+    gap: 0.4rem;
+}
+
+nav li {
+    flex: 1;
+}
+
+nav a {
+    display: block;
+    padding: 0.55rem 0.3rem;
+    text-align: center;
+    font-family: var(--schrift-display);
+    font-weight: 500;
+    font-size: 0.86rem;
+    color: var(--text);
+    text-decoration: none;
+    border: 1px solid var(--linie);
+    border-radius: 0.5rem;
+    background: var(--panel-2);
+    transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+nav .nr {
+    display: none;
+    font-family: var(--schrift-daten);
+    font-size: 0.7rem;
+    color: var(--text-leise);
+}
+
+nav a:hover,
+nav a:focus-visible {
+    color: var(--ion);
+    border-color: var(--ion);
+    box-shadow: 0 0 18px -4px var(--ion-glow), inset 0 0 12px -6px var(--ion-glow);
+    outline: none;
+}
+
+/* ---------- Hauptinhalt ---------- */
+
+main {
+    padding: 1.5rem 1rem 2.5rem;
+    min-width: 0;
+}
+
+section {
+    padding-bottom: 2.25rem;
+    margin-bottom: 2.25rem;
+    border-bottom: 1px solid var(--linie);
+    scroll-margin-top: 4.5rem;
+}
+
+/* sorgt dafür, dass das umflossene Bild in seinem Abschnitt bleibt */
+section::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.rubrik {
+    margin: 0 0 0.35rem;
+    font-family: var(--schrift-daten);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mars);
+}
+
+h2 {
+    margin: 0 0 1rem;
+    font-family: var(--schrift-display);
+    font-weight: 500;
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    line-height: 1.15;
+    text-wrap: balance;
+}
+
+h3 {
+    margin: 0;
+    font-family: var(--schrift-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+p {
+    margin: 0 0 1rem;
+    max-width: 68ch;
+}
+
+strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+.einleitung {
+    font-size: 1.08rem;
+}
+
+/* Fluid Image: passt sich der Breite an (mobil) */
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.mission-bild {
+    margin: 1.25rem auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--linie);
+    box-shadow: 0 0 0 4px rgba(255, 107, 61, 0.06), 0 24px 60px -20px rgba(255, 107, 61, 0.45);
+}
+
+/* Zeitleiste */
+.zeitleiste {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0 0 0 1.25rem;
+    border-left: 2px solid var(--linie);
+    clear: both;
+}
+
+.zeitleiste li {
+    position: relative;
+    padding: 0 0 1rem;
+}
+
+.zeitleiste li::before {
+    content: "";
+    position: absolute;
+    left: calc(-1.25rem - 6px);
+    top: 0.45rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--void);
+    border: 2px solid var(--ion);
+}
+
+.zeitleiste li:nth-child(-n+2)::before {
+    background: var(--ion);
+    box-shadow: 0 0 10px var(--ion-glow);
+}
+
+.zeitleiste b {
+    display: block;
+    font-family: var(--schrift-display);
+    font-weight: 600;
+}
+
+.zeitleiste span {
+    font-family: var(--schrift-daten);
+    font-size: 0.82rem;
+    color: var(--text-leise);
+}
+
+/* Bild-Text-Kombination in Crew, KI und Antrieb */
+.split {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.abzeichen,
+.illustration {
+    width: 11rem;
+    height: auto;
+    flex: none;
+}
+
+.illustration {
+    padding: 0.75rem;
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    background: radial-gradient(circle at 50% 40%, rgba(124, 212, 255, 0.12), transparent 70%), var(--panel);
+}
+
+/* Crew */
+.crew-liste {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.crew-liste li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    background: var(--panel);
+}
+
+.crew-liste p {
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--text-leise);
+}
+
+.crew-liste .rolle {
+    margin: 0.1rem 0 0.4rem;
+    font-family: var(--schrift-daten);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ion);
+}
+
+.kuerzel {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    font-family: var(--schrift-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--void);
+    background: linear-gradient(135deg, var(--ion), #3f86ff);
+    box-shadow: 0 0 16px -4px var(--ion-glow);
+}
+
+.kuerzel svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: currentColor;
+}
+
+.hund .kuerzel {
+    background: linear-gradient(135deg, var(--mars), var(--mars-dunkel));
+    color: #fff;
+    box-shadow: 0 0 16px -4px rgba(255, 107, 61, 0.5);
+}
+
+.hund .rolle {
+    color: var(--mars);
+}
+
+/* KI-Karten */
+.karten {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.karten li {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, rgba(124, 212, 255, 0.07), transparent 55%), var(--panel);
+}
+
+.karten h3 {
+    color: var(--ion);
+    margin-bottom: 0.35rem;
+}
+
+.karten p {
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--text-leise);
+}
+
+/* Antriebswerte */
+.werte {
+    margin: 1.25rem 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.werte div {
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--linie);
+    border-radius: 0.5rem;
+    background: var(--panel);
+}
+
+.werte dt {
+    font-family: var(--schrift-daten);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-leise);
+}
+
+.werte dd {
+    margin: 0.15rem 0 0;
+    font-family: var(--schrift-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--mars);
+    font-variant-numeric: tabular-nums;
+}
+
+.abschluss {
+    margin-top: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--mars);
+    font-size: 1.05rem;
+}
+
+/* Pflichtangaben */
+.daten {
+    margin: 0;
+    font-family: var(--schrift-daten);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--text-leise);
+}
+
+/* Bewegung reduzieren, wenn gewünscht */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+}
+
+/* ==========================================================
+   Breitere Viewports: zweispaltiges Layout mit Flexbox
+   ========================================================== */
+
+@media screen and (min-width: 48em) {
+
+    #holder {
+        max-width: 76rem;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    header {
+        width: 100%;
+        padding: 2.5rem 2rem 2rem;
+    }
+
+    .telemetrie {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        max-width: 52rem;
+    }
+
+    /* linke Spalte: vertikale Navigation */
+    nav {
+        flex: 0 0 15rem;
+        align-self: flex-start;
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        padding: 2rem 1.25rem;
+        border-bottom: 0;
+        background: transparent;
+        backdrop-filter: none;
+        min-height: 100vh;
+    }
+
+    .nav-titel {
+        display: block;
+        margin: 0 0 0.75rem;
+        font-family: var(--schrift-daten);
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-leise);
+    }
+
+    nav ul {
+        display: block;
+        padding: 0;
+    }
+
+    nav li {
+        margin-bottom: 0.6rem;
+    }
+
+    nav a {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    nav .nr {
+        display: inline;
+    }
+
+    nav a:hover .nr,
+    nav a:focus-visible .nr {
+        color: var(--ion);
+    }
+
+    .nav-info {
+        display: block;
+        margin-top: 2rem;
+        padding: 0.9rem;
+        border: 1px dashed var(--linie);
+        border-radius: 0.5rem;
+    }
+
+    .nav-info p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-leise);
+    }
+
+    .nav-info .nav-titel {
+        margin-bottom: 0.4rem;
+    }
+
+    /* rechte Spalte: Hauptinhalt */
+    main {
+        flex: 1;
+        padding: 2.5rem 2rem 3rem 2.5rem;
+        border-left: 1px solid var(--linie);
+    }
+
+    section {
+        scroll-margin-top: 1.5rem;
+    }
+
+    /* Bild in Originalgröße, Text umfließt es rechts */
+    .mission-bild {
+        max-width: none;
+        width: auto;
+        height: auto;
+        float: left;
+        margin: 0.35rem 1.75rem 1rem 0;
+    }
+
+    .split {
+        flex-direction: row;
+        gap: 1.75rem;
+    }
+
+    .abzeichen,
+    .illustration {
+        width: 13rem;
+    }
+
+    .crew-liste,
+    .karten {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .werte {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+</style>
+<div id="holder">
+
+        <header>
+            <p class="kennung">ARES-1 · Bordlogbuch · Tag 142 von 210</p>
+            <h1>Mission Mars: <span>Zukunftsflug mit KI-Robotics</span></h1>
+            <ul class="telemetrie" aria-label="Missionsdaten">
+                <li><span>Distanz zur Erde</span> 141,6 Mio. km</li>
+                <li><span>Geschwindigkeit</span> 24,3 km/s</li>
+                <li><span>An Bord</span> 4 Crew · 2 Hunde</li>
+                <li><span>Systemstatus</span> <b class="status">Nominal</b></li>
+            </ul>
+        </header>
+
+        <nav aria-label="Missionsbereiche">
+            <p class="nav-titel">Bereiche</p>
+            <ul>
+                <li><a href="#mission"><span class="nr">01</span> Mission</a></li>
+                <li><a href="#crew"><span class="nr">02</span> Crew</a></li>
+                <li><a href="#ki-robotics"><span class="nr">03</span> KI-Robotics</a></li>
+                <li><a href="#antrieb"><span class="nr">04</span> Antrieb</a></li>
+            </ul>
+            <div class="nav-info">
+                <p class="nav-titel">Nächstes Ereignis</p>
+                <p>Kurskorrektur TCM-4 in <strong>3 Tagen</strong></p>
+            </div>
+        </nav>
+
+        <main>
+
+            <section id="mission">
+                <p class="rubrik">01 · Mission</p>
+                <h2>Sieben Monate bis zum roten Planeten</h2>
+                <p class="einleitung">
+                    Das Projekt <strong>„Mission Mars“</strong> beschreibt einen zukunftsweisenden Flug
+                    zum roten Planeten. Ziel ist es, mit einer <strong>4-Mann-Besatzung</strong> und
+                    <strong>zwei Hunden</strong> sicher zum Mars zu reisen, wissenschaftliche Daten zu
+                    sammeln und neue Technologien unter realen Bedingungen zu testen.
+                </p>
+
+                <img class="mission-bild" src="Marsflug.jpeg" alt="Raumschiff mit leuchtenden Triebwerken auf dem Flug zum Mars" width="500" height="375">
+
+                <p>
+                    Die Raumfähre <strong>ARES-1</strong> startete im Startfenster vom Frühjahr 2031,
+                    das alle 26 Monate eine besonders günstige Bahn zwischen Erde und Mars öffnet.
+                    Rund 210 Tage dauert der Transfer. In dieser Zeit legt das Schiff mehr als
+                    480 Millionen Kilometer auf einer gekrümmten Ellipse um die Sonne zurück.
+                </p>
+                <p>
+                    Unterstützt wird die Crew durch neuartige <strong>KI-Robotics-Systeme</strong>.
+                    Intelligente Roboter helfen bei Steuerung, Wartung und Datenanalyse, überwachen
+                    technische Abläufe und erkennen mögliche Störungen frühzeitig. Dadurch wird die
+                    Sicherheit an Bord erhöht und die Besatzung kann sich stärker auf Forschung und
+                    Mission konzentrieren.
+                </p>
+                <p>
+                    Nach der Ankunft schwenkt ARES-1 in eine Umlaufbahn ein. Ein Landemodul bringt die
+                    Crew in die Region Arcadia Planitia, in der Radarmessungen Wassereis knapp unter
+                    der Oberfläche vermuten lassen. Dort beginnt ein 30-tägiger Forschungsaufenthalt.
+                </p>
+
+                <ol class="zeitleiste" aria-label="Missionsablauf">
+                    <li><b>Start</b><span>Tag 0 · Erdorbit verlassen</span></li>
+                    <li><b>Transfer</b><span>Tag 1–209 · Reise und Forschung an Bord</span></li>
+                    <li><b>Ankunft</b><span>Tag 210 · Einschwenken in die Marsumlaufbahn</span></li>
+                    <li><b>Landung</b><span>Tag 214 · Arcadia Planitia</span></li>
+                    <li><b>Rückflug</b><span>Tag 244 · Start zurück zur Erde</span></li>
+                </ol>
+            </section>
+
+            <section id="crew">
+                <p class="rubrik">02 · Crew</p>
+                <h2>Vier Menschen, zwei Hunde, ein Ziel</h2>
+                <div class="split">
+                    <img class="abzeichen" src="img/missionsabzeichen.svg" alt="Missionsabzeichen: Mars mit Umlaufbahn, vier Sterne und zwei Pfotenabdrücke" width="220" height="220">
+                    <p>
+                        Auch das Leben an Bord spielt eine wichtige Rolle. Die beiden Hunde begleiten die
+                        Mission, um das Zusammenleben von Mensch und Tier auf langen Weltraumreisen zu
+                        untersuchen. Die vier Crewmitglieder wurden aus über 2.000 Bewerbungen
+                        ausgewählt und haben drei Jahre gemeinsam trainiert, unter anderem
+                        in einer Polarstation und in einer Unterwasser-Habitat-Simulation.
+                    </p>
+                </div>
+
+                <ul class="crew-liste">
+                    <li>
+                        <span class="kuerzel" aria-hidden="true">LH</span>
+                        <div>
+                            <h3>Dr. Lena Hartmann</h3>
+                            <p class="rolle">Kommandantin</p>
+                            <p>Leitet die Mission und trifft die Entscheidungen bei Abweichungen vom Flugplan.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="kuerzel" aria-hidden="true">JO</span>
+                        <div>
+                            <h3>Jonas Okafor</h3>
+                            <p class="rolle">Pilot</p>
+                            <p>Verantwortlich für Kurskorrekturen, Andockmanöver und die Landung.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="kuerzel" aria-hidden="true">MT</span>
+                        <div>
+                            <h3>Mei Tanaka</h3>
+                            <p class="rolle">Systemingenieurin</p>
+                            <p>Betreut Antrieb, Energieversorgung und die Zusammenarbeit mit den Robotern.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="kuerzel" aria-hidden="true">RC</span>
+                        <div>
+                            <h3>Dr. Rafael Costa</h3>
+                            <p class="rolle">Bordarzt und Biologe</p>
+                            <p>Überwacht die Gesundheit von Mensch und Tier und leitet die Experimente.</p>
+                        </div>
+                    </li>
+                    <li class="hund">
+                        <span class="kuerzel" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="6" cy="9" rx="2.2" ry="2.8"/><ellipse cx="10.3" cy="5.2" rx="2.2" ry="2.9"/><ellipse cx="15.2" cy="5.4" rx="2.2" ry="2.9"/><ellipse cx="19" cy="9.6" rx="2.1" ry="2.7"/><path d="M12.6 11c-3 0-6.3 4.4-6.3 7.3 0 2.1 1.6 2.9 3.4 2.6 1.1-.2 2-.8 2.9-.8s1.8.6 2.9.8c1.8.3 3.4-.5 3.4-2.6 0-2.9-3.3-7.3-6.3-7.3z"/></svg></span>
+                        <div>
+                            <h3>Luna</h3>
+                            <p class="rolle">Border Collie</p>
+                            <p>Ruhig und aufmerksam. Ihr Schlafrhythmus liefert Daten zur Anpassung an fehlendes Tageslicht.</p>
+                        </div>
+                    </li>
+                    <li class="hund">
+                        <span class="kuerzel" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="6" cy="9" rx="2.2" ry="2.8"/><ellipse cx="10.3" cy="5.2" rx="2.2" ry="2.9"/><ellipse cx="15.2" cy="5.4" rx="2.2" ry="2.9"/><ellipse cx="19" cy="9.6" rx="2.1" ry="2.7"/><path d="M12.6 11c-3 0-6.3 4.4-6.3 7.3 0 2.1 1.6 2.9 3.4 2.6 1.1-.2 2-.8 2.9-.8s1.8.6 2.9.8c1.8.3 3.4-.5 3.4-2.6 0-2.9-3.3-7.3-6.3-7.3z"/></svg></span>
+                        <div>
+                            <h3>Kepler</h3>
+                            <p class="rolle">Australian Shepherd</p>
+                            <p>Der Bewegungsfreudige an Bord. Testet das Laufband für Vierbeiner in Schwerelosigkeit.</p>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="ki-robotics">
+                <p class="rubrik">03 · KI-Robotics</p>
+                <h2>KIRA denkt mit, die Crew entscheidet</h2>
+                <div class="split">
+                    <img class="illustration" src="img/kira-roboter.svg" alt="Illustration des Bordroboters KIRA mit Visier und Greifarmen" width="240" height="240">
+                    <p>
+                        Herzstück der Bordtechnik ist <strong>KIRA</strong>, die Kognitive Intelligente
+                        Robotik-Assistenz. Sie verarbeitet jede Sekunde rund 40.000 Messwerte aus allen
+                        Systemen des Schiffs und meldet Auffälligkeiten, bevor sie zum Problem werden.
+                        Wichtige Entscheidungen bleiben trotzdem bei der Crew: KIRA schlägt vor,
+                        der Mensch bestätigt.
+                    </p>
+                </div>
+
+                <ul class="karten">
+                    <li>
+                        <h3>Steuerung</h3>
+                        <p>Berechnet Kurskorrekturen und spielt sie dem Piloten als Vorschlag mit erwarteter Treibstoffmenge zu.</p>
+                    </li>
+                    <li>
+                        <h3>Wartung</h3>
+                        <p>Drei Wartungsdrohnen prüfen Leitungen und Außenhaut und tauschen Filter selbstständig aus.</p>
+                    </li>
+                    <li>
+                        <h3>Datenanalyse</h3>
+                        <p>Wertet Experimente aus und erstellt jeden Abend einen Bericht für das Kontrollzentrum auf der Erde.</p>
+                    </li>
+                    <li>
+                        <h3>Frühwarnung</h3>
+                        <p>Erkennt Muster wie steigende Temperaturen an Pumpen und warnt Tage vor einem möglichen Ausfall.</p>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="antrieb">
+                <p class="rubrik">04 · Antrieb</p>
+                <h2>Treibstoff, der auf dem Mars nachgetankt wird</h2>
+                <div class="split">
+                    <img class="illustration" src="img/antrieb-schema.svg" alt="Schematische Darstellung des Triebwerks mit Brennkammer, Düse und Abgasstrahl" width="240" height="240">
+                    <p>
+                        Ein weiterer Schwerpunkt ist die Entwicklung einer neuen Technologie für
+                        <strong>Raketentreibstoff</strong>. Dieser soll leistungsstärker, effizienter und
+                        ressourcenschonender sein als bisherige Systeme. So könnten zukünftige Raumflüge
+                        schneller, sicherer und wirtschaftlicher werden.
+                    </p>
+                </div>
+                <p>
+                    Das Triebwerk <strong>Ares H2X</strong> verbrennt Methan mit flüssigem Sauerstoff.
+                    Beides lässt sich auf dem Mars aus dem Kohlendioxid der Atmosphäre und aus
+                    Wassereis herstellen. Eine Anlage im Landemodul produziert während des
+                    Aufenthalts den Treibstoff für den Rückflug. Das Schiff muss ihn also nicht von
+                    der Erde mitbringen und startet deutlich leichter.
+                </p>
+
+                <dl class="werte">
+                    <div><dt>Schub</dt><dd>2.300 kN</dd></div>
+                    <div><dt>Treibstoff</dt><dd>Methan + LOX</dd></div>
+                    <div><dt>Gewichtsersparnis</dt><dd>ca. 30 %</dd></div>
+                    <div><dt>Nachtanken</dt><dd>vor Ort auf dem Mars</dd></div>
+                </dl>
+
+                <p class="abschluss">
+                    <strong>„Mission Mars“</strong> verbindet Forschung, Innovation und
+                    Abenteuer zu einem spannenden Zukunftsprojekt der Raumfahrt.
+                </p>
+            </section>
+
+            <p class="daten">
+                Michael Schönebeck · Einsendeaufgabe MMDE30 Responsive Webdesign · Neugestaltung Oktober 2026
+            </p>
+        </main>
+
+    </div>
+
